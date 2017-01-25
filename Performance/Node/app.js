@@ -39,18 +39,24 @@ MongoClient.connect("mongodb://localhost:27017/compare", {}, function (error, db
                 "$gt": 18
             }
         }).toArray(function (error, array) {
-            amount += array.length;
+            array.forEach(function (document) {
+                amount += 1;
+            });
 
             users.find({
                 "name_first": {
                     "$eq": "Joannis"
                 }
             }).toArray(function (error, array2) {
-                amount2 += array2.length;
+                array2.forEach(function (document) {
+                    amount2 += 1;
+                });
 
                 users.remove({}, function(error, result2) {
                     var end = Date.now();
 
+                    console.log(amount);
+                    console.log(amount2);
                     console.log((end - start) / 1000);
 
                     db.close();
