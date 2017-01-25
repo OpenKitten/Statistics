@@ -34,32 +34,34 @@ MongoClient.connect("mongodb://localhost:27017/compare", {}, function (error, db
     var amount2 = 0;
 
     users.insertMany(documents, function (error, result) {
-        users.find({
-            "age": {
-                "$gt": 18
-            }
-        }).toArray(function (error, array) {
-            array.forEach(function (document) {
-                amount += 1;
-            });
-
+        users.insertMany(otherDocuments, function (error, result2) {
             users.find({
-                "name_first": {
-                    "$eq": "Joannis"
+                "age": {
+                    "$gt": 18
                 }
-            }).toArray(function (error, array2) {
-                array2.forEach(function (document) {
-                    amount2 += 1;
+            }).toArray(function (error, array) {
+                array.forEach(function (document) {
+                    amount += 1;
                 });
 
-                users.remove({}, function(error, result2) {
-                    var end = Date.now();
+                users.find({
+                    "name_first": {
+                        "$eq": "Joannis"
+                    }
+                }).toArray(function (error, array2) {
+                    array2.forEach(function (document) {
+                        amount2 += 1;
+                    });
 
-                    console.log(amount);
-                    console.log(amount2);
-                    console.log((end - start) / 1000);
+                    users.remove({}, function(error, result3) {
+                        var end = Date.now();
 
-                    db.close();
+                        console.log(amount);
+                        console.log(amount2);
+                        console.log((end - start) / 1000);
+
+                        db.close();
+                    });
                 });
             });
         });
