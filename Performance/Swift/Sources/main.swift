@@ -2,9 +2,9 @@ import LogKitten
 import MongoKitten
 import Foundation
 
+let startBench = Date()
 
-
-Logger.default.minimumLogLevel = DefaultLevel.debug.compareValue
+Logger.default.minimumLogLevel = DefaultLevel.error.compareValue
 
 func benchmark() throws -> Double {
     let start = Date()
@@ -56,11 +56,13 @@ func benchmark() throws -> Double {
 
     let end = Date()
 
-//    print(counter)
-//    print(counter2)
-    try db.server.disconnect()
+    do {
+        try db.server.disconnect()
+    } catch {
+        print("ERROR ON DISCONNECT \(error)")
+    }
     let spent = end.timeIntervalSince(start)
-//    print(spent)
+
     return spent
 
 }
@@ -93,10 +95,13 @@ try prepare()
 
 var results = [Double]()
 
-for i in 1..<70 {
+for i in 1...100 {
 //    print(i)
     results.append(try benchmark())
 }
+
+let endBench = Date()
+let benchTotal = endBench.timeIntervalSince(startBench)
 
 let max = results.reduce(0) { $0 > $1 ? $0 : $1 }
 let min = results.reduce(max) { $0 < $1 ? $0 : $1 }
@@ -109,4 +114,6 @@ if let median = median(results) {
     print("Median : \(median)")
 }
 
+print("Execution Time : \(benchTotal)")
+print("Rounds : \(results.count)")
 
