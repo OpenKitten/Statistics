@@ -100,6 +100,9 @@ for i in 1...100 {
     results.append(try benchmark())
 }
 
+results.removeFirst(5)
+results.removeLast(5)
+
 let endBench = Date()
 let benchTotal = endBench.timeIntervalSince(startBench)
 
