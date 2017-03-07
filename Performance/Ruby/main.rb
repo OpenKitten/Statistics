@@ -26,14 +26,14 @@ otherDocuments = Array.new(10000,{ name_first: 'Harriebob',
 collection.insert_many(otherDocuments)                        
 
 counter = 0 
-collection.find({'age' => { '$gt' => 18}}).each { 
-    counter +=1
+collection.find({'age' => { '$gt' => 18}}).each { |document| 
+    counter = counter + document[:age]
 }
 puts counter
 
 counter2 = 0
-collection.find({'name_first' => 'Joannis'}).each {
-    counter2 += 1
+collection.find({'name_first' => 'Joannis'}).each { |document|
+    counter2 = counter2 + document[:age]
 }
 puts counter2
 
