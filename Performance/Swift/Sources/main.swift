@@ -1,14 +1,11 @@
-import LogKitten
 import MongoKitten
 import Foundation
 
 let startBench = Date()
 
-Logger.default.minimumLogLevel = DefaultLevel.error.compareValue
-
 func benchmark() throws -> Double {
     let start = Date()
-    let db = try Database(mongoURL: "mongodb://localhost:27017/compare")
+    let db = try Database("mongodb://localhost:27017/compare")
     let users = db["users"]
 
 
@@ -19,10 +16,10 @@ func benchmark() throws -> Double {
         "programmer": true,
         "likes": [
             "mongodb", "swift", "programming", "swimming"
-            ] as Document
+            ]
         ], count: 10_000)
 
-    try users.insert(documents)
+    try users.insert(contentsOf: documents)
 
     let otherDocuments = [Document](repeating: [
         "name_first": "Harriebob",
@@ -31,28 +28,23 @@ func benchmark() throws -> Double {
         "programmer": false,
         "likes": [
             "facebook", "golfing", "cooking", "reading"
-            ] as Document
+            ]
         ], count: 10_000)
 
-
-
-
-
-    try users.insert(otherDocuments)
+    try users.insert(contentsOf: otherDocuments)
 
     var counter = 0
 
-    for _ in try users.find(matching: "age" > 18) {
+    for _ in try users.find("age" > 18) {
         counter += 1
     }
 
     var counter2 = 0
 
-    for _ in try users.find(matching: "name_first" == "Joannis") {
+    for _ in try users.find("name_first" == "Joannis") {
         counter2 += 1
     }
-
-    try users.remove(matching: [:])
+    try users.remove([:])
 
     let end = Date()
 
@@ -68,9 +60,9 @@ func benchmark() throws -> Double {
 }
 
 func prepare() throws {
-    let db = try Database(mongoURL: "mongodb://localhost:27017/compare")
+    let db = try Database("mongodb://localhost:27017/compare")
     let users = db["users"]
-    try users.remove(matching: [:])
+    try users.remove([:])
     try db.server.disconnect()
 }
 
@@ -95,13 +87,9 @@ try prepare()
 
 var results = [Double]()
 
-for i in 1...100 {
-//    print(i)
+for _ in 0..<20 {
     results.append(try benchmark())
 }
-
-results.removeFirst(5)
-results.removeLast(5)
 
 let endBench = Date()
 let benchTotal = endBench.timeIntervalSince(startBench)
